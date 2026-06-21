@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initRevealObserver();
   initFloatingWa();
   initFooterYear();
+  initReadingProgress();
+  initScrollTop();
+  initFabLabel();
+  initCounters();
 
   const page = document.body.dataset.page;
   if (page === 'home') initHome();
@@ -14,6 +18,106 @@ document.addEventListener('DOMContentLoaded', () => {
   else if (page === 'product') initProductPage();
   else if (page === 'contact') initContactPage();
 });
+
+/* ---------- مؤشّر تقدّم القراءة ---------- */
+function initReadingProgress() {
+  const bar = document.createElement('div');
+  bar.className = 'reading-progress';
+  const fill = document.createElement('span');
+  bar.appendChild(fill);
+  document.body.appendChild(bar);
+
+  const update = () => {
+    const h = document.documentElement;
+    const scrollable = h.scrollHeight - h.clientHeight;
+    const pct = scrollable > 0 ? (h.scrollTop / scrollable) * 100 : 0;
+    fill.style.width = pct + '%';
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+}
+
+/* ---------- زر العودة للأعلى ---------- */
+function initScrollTop() {
+  const btn = document.createElement('button');
+  btn.className = 'scroll-top';
+  btn.setAttribute('aria-label', 'العودة للأعلى');
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
+  document.body.appendChild(btn);
+
+  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  const toggle = () => btn.classList.toggle('show', window.scrollY > 400);
+  window.addEventListener('scroll', toggle, { passive: true });
+  toggle();
+}
+
+/* ---------- توسيع زر واتساب العائم بنص "كلمنا" ---------- */
+function initFabLabel() {
+  const fab = document.querySelector('.fab-wa');
+  if (!fab) return;
+  const label = document.createElement('span');
+  label.className = 'fab-label';
+  label.textContent = 'كلّمنا';
+  fab.appendChild(label);
+
+  // يظهر النص بعد 3 ثوانٍ ثم يختفي بعد 4 ثوانٍ من الظهور (لمسة جذب لطيفة)
+  setTimeout(() => {
+    fab.classList.add('show-label');
+    setTimeout(() => fab.classList.remove('show-label'), 4000);
+  }, 3000);
+}
+
+/* ---------- عدّاد الأرقام التصاعدي ---------- */
+function initCounters() {
+  const els = document.querySelectorAll('[data-count]');
+  if (!els.length) return;
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { animateCount(e.target); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.4 });
+  els.forEach(el => obs.observe(el));
+}
+
+function animateCount(el) {
+  const target = parseInt(el.dataset.count, 10) || 0;
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  const duration = 1700;
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+    const val = Math.floor(eased * target);
+    el.textContent = prefix + val.toLocaleString('en-US') + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = prefix + target.toLocaleString('en-US') + suffix;
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- Tilt 3D خفيف يتبع حركة الماوس ---------- */
+function attachTilt(card) {
+  // تجاهل أجهزة اللمس وتفضيل تقليل الحركة
+  if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const MAX = 6; // أقصى درجة ميل
+  card.addEventListener('mouseenter', () => { card.style.transition = 'transform 0.1s ease-out'; });
+  card.addEventListener('mousemove', (e) => {
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    const rotX = (py - 0.5) * -2 * MAX;
+    const rotY = (px - 0.5) * 2 * MAX;
+    card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-6px)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transition = 'transform 0.4s ease';
+    card.style.transform = '';
+  });
+}
 
 /* ---------- درج التنقل للموبايل ---------- */
 function initDrawer() {

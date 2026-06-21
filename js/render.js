@@ -61,6 +61,10 @@ function createProductCard(product) {
   actions.append(detailsBtn, waBtn);
   body.append(title, desc, actions);
   card.append(media, body);
+
+  // لمسة Tilt 3D خفيفة تتبع الماوس (تُتجاهل على الموبايل)
+  if (typeof attachTilt === 'function') attachTilt(card);
+
   return card;
 }
 
