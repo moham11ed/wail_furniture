@@ -177,3 +177,50 @@ table.admin-table { width: 100%; border-collapse: collapse; min-width: 640px; }
   .admin-main { padding: 28px; }
   .form-grid.cols-2 { grid-template-columns: 1fr 1fr; }
 }
+
+/* =========================================================
+   موبايل: تحويل الجداول لكروت بدل الـ scroll الأفقي
+   ========================================================= */
+@media (max-width: 767px) {
+  .admin-main { padding: 16px 12px; }
+  .admin-topbar { padding-inline: 12px; }
+  .admin-topbar .brand span:not(.logo-mark) { font-size: 0.92rem; }
+  .admin-topbar #logout-btn { padding: 7px 12px; font-size: 0.85rem; }
+
+  .table-wrap { background: transparent; box-shadow: none; overflow: visible; }
+  .admin-table { min-width: 0; }
+  .admin-table thead { display: none; }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td { display: block; width: 100%; }
+
+  .admin-table tr {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 4px 0;
+    margin-bottom: 14px;
+  }
+  .admin-table td {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    text-align: end;
+    font-size: 0.9rem;
+  }
+  .admin-table tr td:last-child { border-bottom: none; }
+  .admin-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--text-soft);
+    text-align: start;
+    flex-shrink: 0;
+  }
+  .admin-table td .st-select { max-width: 62%; }
+  .admin-table .table-actions { justify-content: flex-end; }
+
+  /* صفوف الحالة (تحميل/فاضي) تبقى بدون عنوان وفي النص */
+  .empty-row { justify-content: center !important; text-align: center !important; }
+  .empty-row::before { content: "" !important; }
+
+  /* المودال يملأ الشاشة براحة */
+  .modal-overlay { padding: 12px; }
+}

@@ -132,13 +132,13 @@ async function loadProducts() {
     const tr = document.createElement('tr');
     const img = (p.images && p.images[0]) || '';
     tr.innerHTML = `
-      <td><img class="row-img" src="${aesc(img)}" alt="" onerror="this.style.visibility='hidden'"></td>
-      <td>${aesc(p.name_ar)}${p.is_active === false ? ' <span class="badge st-cancelled">محذوف</span>' : ''}</td>
-      <td>${CAT_LABELS[p.category] || p.category}</td>
-      <td>${TYPE_LABELS[p.product_type] || p.product_type}</td>
-      <td>${p.stock ?? 0}</td>
-      <td>${p.is_featured ? '⭐' : '—'}</td>
-      <td><div class="table-actions">
+      <td data-label="الصورة"><img class="row-img" src="${aesc(img)}" alt="" onerror="this.style.visibility='hidden'"></td>
+      <td data-label="الاسم">${aesc(p.name_ar)}${p.is_active === false ? ' <span class="badge st-cancelled">محذوف</span>' : ''}</td>
+      <td data-label="الفئة">${CAT_LABELS[p.category] || p.category}</td>
+      <td data-label="النوع">${TYPE_LABELS[p.product_type] || p.product_type}</td>
+      <td data-label="المخزون">${p.stock ?? 0}</td>
+      <td data-label="مميز">${p.is_featured ? '⭐' : '—'}</td>
+      <td data-label="إجراءات"><div class="table-actions">
         <button class="icon-btn" data-edit aria-label="تعديل"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg></button>
         <button class="icon-btn danger" data-del aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
       </div></td>`;
@@ -288,18 +288,18 @@ async function loadOrders(statusFilter = '') {
     const date = new Date(o.created_at).toLocaleDateString('ar-EG');
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${aesc(o.order_number)}</td>
-      <td>${aesc(o.customer_name)}</td>
-      <td>${aesc(o.customer_phone)}</td>
-      <td>${aesc(o.customer_city)}</td>
-      <td>${count}</td>
-      <td>
+      <td data-label="رقم الطلب">${aesc(o.order_number)}</td>
+      <td data-label="العميل">${aesc(o.customer_name)}</td>
+      <td data-label="الهاتف">${aesc(o.customer_phone)}</td>
+      <td data-label="المحافظة">${aesc(o.customer_city)}</td>
+      <td data-label="القطع">${count}</td>
+      <td data-label="الحالة">
         <select class="admin-input st-select" data-id="${o.id}">
           ${Object.keys(STATUS_LABELS).map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${STATUS_LABELS[s]}</option>`).join('')}
         </select>
       </td>
-      <td>${date}</td>
-      <td><button class="icon-btn" data-view aria-label="تفاصيل"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>`;
+      <td data-label="التاريخ">${date}</td>
+      <td data-label="تفاصيل"><button class="icon-btn" data-view aria-label="تفاصيل"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>`;
     tr.querySelector('.st-select').addEventListener('change', (e) => updateOrderStatus(o.id, e.target.value, e.target));
     tr.querySelector('[data-view]').addEventListener('click', () => viewOrder(o));
     tbody.appendChild(tr);
