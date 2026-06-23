@@ -125,7 +125,7 @@ function initAdminNav() {
 async function loadProducts() {
   const tbody = document.getElementById('products-tbody');
   tbody.innerHTML = '<tr><td colspan="7" class="empty-row">جارٍ التحميل...</td></tr>';
-  const { data, error } = await _sb.from('products').select('*').order('created_at', { ascending: false });
+  const { data, error } = await _sb.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
   if (error) { tbody.innerHTML = `<tr><td colspan="7" class="empty-row">خطأ: ${aesc(error.message)}</td></tr>`; return; }
   if (!data.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty-row">لا توجد منتجات بعد.</td></tr>'; return; }
 
@@ -266,9 +266,10 @@ async function saveProduct(e) {
 }
 
 async function deleteProduct(product) {
-  if (!confirm(`حذف "${product.name_ar}"؟ (سيُخفى من الموقع)`)) return;
+  if (!confirm(`حذف "${product.name_ar}"؟ هيختفي من المتجر ومن القائمة.`)) return;
   const { error } = await _sb.from('products').update({ is_active: false }).eq('id', product.id);
-  if (error) { alert('خطأ: ' + error.message); return; }
+  if (error) { alert('تعذّر الحذف: ' + error.message); return; }
+  alert('تم حذف المنتج ✅');
   loadProducts();
 }
 
