@@ -275,34 +275,24 @@ async function deleteProduct(product) {
 /* =========================================================
    الطلبات
    ========================================================= */
+let _currentFilter = '';
+
 async function loadOrders(statusFilter = '') {
+  _currentFilter = statusFilter;
   const tbody = document.getElementById('orders-tbody');
-  tbody.innerHTML = '<tr><td colspan="8" class="empty-row">جارٍ التحميل...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="2" class="empty-row">جارٍ التحميل...</td></tr>';
   let q = _sb.from('orders').select('*').order('created_at', { ascending: false });
   if (statusFilter) q = q.eq('status', statusFilter);
   const { data, error } = await q;
-  if (error) { tbody.innerHTML = `<tr><td colspan="8" class="empty-row">خطأ: ${aesc(error.message)}</td></tr>`; return; }
-  if (!data.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty-row">لا توجد طلبات.</td></tr>'; return; }
+  if (error) { tbody.innerHTML = `<tr><td colspan="2" class="empty-row">خطأ: ${aesc(error.message)}</td></tr>`; return; }
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="2" class="empty-row">لا توجد طلبات.</td></tr>'; return; }
 
   tbody.innerHTML = '';
   data.forEach(o => {
-    const count = (o.items || []).reduce((s, i) => s + (i.qty || 1), 0);
-    const date = new Date(o.created_at).toLocaleDateString('ar-EG');
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td data-label="رقم الطلب">${aesc(o.order_number)}</td>
       <td data-label="العميل">${aesc(o.customer_name)}</td>
-      <td data-label="الهاتف">${aesc(o.customer_phone)}</td>
-      <td data-label="المحافظة">${aesc(o.customer_city)}</td>
-      <td data-label="القطع">${count}</td>
-      <td data-label="الحالة">
-        <select class="admin-input st-select" data-id="${o.id}">
-          ${Object.keys(STATUS_LABELS).map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${STATUS_LABELS[s]}</option>`).join('')}
-        </select>
-      </td>
-      <td data-label="التاريخ">${date}</td>
       <td data-label="تفاصيل"><button class="icon-btn" data-view aria-label="تفاصيل"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>`;
-    tr.querySelector('.st-select').addEventListener('change', (e) => updateOrderStatus(o.id, e.target.value, e.target));
     tr.querySelector('[data-view]').addEventListener('click', () => viewOrder(o));
     tbody.appendChild(tr);
   });
@@ -324,20 +314,39 @@ function initOrderModal() {
 function viewOrder(o) {
   const modal = document.getElementById('order-modal');
   const body = document.getElementById('order-details');
+  const date = new Date(o.created_at).toLocaleString('ar-EG');
+  const count = (o.items || []).reduce((s, i) => s + (i.qty || 1), 0);
   const items = (o.items || []).map(i => {
     const extra = [i.size, i.color].filter(Boolean).join(' / ');
-    return `<div class="summary-line"><span>${aesc(i.name_ar)}${extra ? ' — ' + aesc(extra) : ''}</span><strong>× ${i.qty}</strong></div>`;
+    return `<div class="order-item-line"><span>${aesc(i.name_ar)}${extra ? ' — ' + aesc(extra) : ''}</span><strong>× ${i.qty}</strong></div>`;
   }).join('');
+  const statusOptions = Object.keys(STATUS_LABELS)
+    .map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${STATUS_LABELS[s]}</option>`).join('');
+
   body.innerHTML = `
     <div class="summary-line"><span>رقم الطلب</span><strong>${aesc(o.order_number)}</strong></div>
-    <div class="summary-line"><span>الحالة</span><strong>${STATUS_LABELS[o.status] || o.status}</strong></div>
+    <div class="form-row" style="margin:14px 0">
+      <label>حالة الطلب</label>
+      <select class="admin-input" id="order-status-select" style="width:100%">${statusOptions}</select>
+    </div>
     <div class="summary-line"><span>الاسم</span><strong>${aesc(o.customer_name)}</strong></div>
-    <div class="summary-line"><span>الهاتف</span><strong>${aesc(o.customer_phone)}</strong></div>
+    <div class="summary-line"><span>الهاتف</span><strong><a href="tel:${aesc(o.customer_phone)}">${aesc(o.customer_phone)}</a></strong></div>
     <div class="summary-line"><span>المحافظة</span><strong>${aesc(o.customer_city)}</strong></div>
     <div class="summary-line"><span>العنوان</span><strong style="max-width:60%;text-align:start">${aesc(o.customer_address)}</strong></div>
     ${o.notes ? `<div class="summary-line"><span>ملاحظات</span><strong style="max-width:60%;text-align:start">${aesc(o.notes)}</strong></div>` : ''}
+    <div class="summary-line"><span>عدد القطع</span><strong>${count}</strong></div>
+    <div class="summary-line"><span>التاريخ</span><strong>${aesc(date)}</strong></div>
     <h4 style="margin:16px 0 8px">المنتجات</h4>
     ${items}`;
+
+  // تغيير الحالة من داخل البوب أب
+  const sel = body.querySelector('#order-status-select');
+  sel.addEventListener('change', async () => {
+    await updateOrderStatus(o.id, sel.value, sel);
+    o.status = sel.value;
+    loadOrders(_currentFilter);
+  });
+
   modal.classList.add('open');
 }
 

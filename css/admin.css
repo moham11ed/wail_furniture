@@ -248,6 +248,10 @@ table.admin-table { width: 100%; border-collapse: collapse; min-width: 640px; }
   .mobile-tabs { display: flex; }
   .section-head-row h2 { display: none; }
   .section-head-row { justify-content: flex-end; margin-bottom: 14px; }
+  /* إخفاء السايدبار تمامًا على الموبايل (التبويبات بديله) */
+  .admin-sidebar, .sidebar-overlay { display: none !important; }
+  .admin-body { display: block; }
+  .admin-shell { overflow-x: hidden; }
 }
 
 /* =========================================================
@@ -267,11 +271,88 @@ table.admin-table { width: 100%; border-collapse: collapse; min-width: 640px; }
   [data-section="products"] .admin-table td[data-label="إجراءات"]::before { display: none; }
   [data-section="products"] .admin-table td[data-label="إجراءات"] { padding-top: 4px; }
 
-  /* المودال يملأ الشاشة بالكامل (فورم كامل الصفحة) */
-  .modal-overlay { padding: 0; align-items: stretch; }
-  .modal { max-width: 100%; min-height: 100vh; border-radius: 0; margin: 0; display: flex; flex-direction: column; }
-  .modal-head { border-radius: 0; }
-  .modal > form { display: flex; flex-direction: column; flex: 1; }
-  .modal-body { flex: 1; }
-  .modal-foot { position: sticky; bottom: 0; background: var(--surface); }
+  /* المودال = بانل كامل الشاشة صلب: هيدر ثابت + محتوى يسكرول + أزرار ثابتة */
+  .modal-overlay { padding: 0; overflow: hidden; align-items: stretch; }
+  .modal {
+    width: 100%; max-width: 100%;
+    height: 100vh; height: 100dvh;
+    margin: 0; border-radius: 0;
+    display: flex; flex-direction: column;
+    background: var(--surface);
+  }
+  .modal-head { border-radius: 0; flex-shrink: 0; }
+  .modal > form { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .modal-body { flex: 1; overflow-y: auto; }
+  .modal-foot { flex-shrink: 0; position: static; background: var(--surface); }
+}
+
+/* =========================================================
+   موبايل: تحسين شكل كارت الطلب (وضوح القيم + رقم الطلب كعنوان)
+   ========================================================= */
+@media (max-width: 767px) {
+  [data-section="orders"] .admin-table td {
+    font-size: 0.92rem;
+  }
+  /* القيمة (النص بعد العنوان) تبان واضحة وغامقة */
+  [data-section="orders"] .admin-table td { color: var(--text); }
+  [data-section="orders"] .admin-table td::before {
+    color: var(--text-soft);
+    font-weight: 700;
+    min-width: 90px;
+  }
+  /* رقم الطلب كشريط عنوان بارز أعلى الكارت */
+  [data-section="orders"] .admin-table td[data-label="رقم الطلب"] {
+    background: var(--bg-alt);
+    font-weight: 800;
+    color: var(--primary);
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  /* قائمة الحالة وزر التفاصيل يظهروا بوضوح */
+  [data-section="orders"] .admin-table td .st-select { max-width: 62%; font-size: 0.88rem; }
+  [data-section="orders"] .admin-table td[data-label="تفاصيل"] .icon-btn { background: var(--accent); color: #fff; }
+}
+
+/* =========================================================
+   موبايل: قائمة الطلبات تبقى جدول بسيط (اسم العميل + تفاصيل)
+   ========================================================= */
+@media (max-width: 767px) {
+  [data-section="orders"] .table-wrap { overflow-x: auto; background: var(--surface); box-shadow: var(--shadow-sm); border-radius: var(--radius); }
+  [data-section="orders"] .admin-table { min-width: 0; display: table; width: 100%; }
+  [data-section="orders"] .admin-table thead { display: table-header-group; }
+  [data-section="orders"] .admin-table tbody { display: table-row-group; }
+  [data-section="orders"] .admin-table tr { display: table-row; background: transparent; box-shadow: none; margin: 0; border-radius: 0; padding: 0; }
+  [data-section="orders"] .admin-table td {
+    display: table-cell; width: auto;
+    border-bottom: 1px solid var(--border);
+    text-align: start; background: transparent; font-weight: 600;
+    padding: 14px;
+  }
+  [data-section="orders"] .admin-table td::before { display: none; }
+  [data-section="orders"] .admin-table td[data-label="تفاصيل"] { text-align: end; width: 64px; }
+  [data-section="orders"] .empty-row { text-align: center; }
+}
+
+/* =========================================================
+   تنسيق سطور تفاصيل الطلب داخل البوب أب (ليبل : داتا)
+   ========================================================= */
+.modal-body .summary-line {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 20px; padding: 9px 0; border-bottom: 1px solid var(--border);
+}
+.modal-body .summary-line > span { color: var(--text-soft); flex-shrink: 0; }
+.modal-body .summary-line > span::after { content: " :"; }
+.modal-body .summary-line > strong { color: var(--primary); text-align: start; }
+
+.modal-body .order-item-line {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.modal-body .order-item-line span { color: var(--text); }
+.modal-body .order-item-line strong { color: var(--accent-dark); flex-shrink: 0; }
+
+/* =========================================================
+   موبايل: مسافة جانبية بسيطة لقائمة المنتجات (يمين وشمال)
+   ========================================================= */
+@media (max-width: 767px) {
+  [data-section="products"] .table-wrap { padding-inline: 8px; }
 }
