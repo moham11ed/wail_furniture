@@ -109,10 +109,12 @@ function initAdminNav() {
   document.querySelectorAll('[data-nav]').forEach(link => {
     link.addEventListener('click', () => {
       const target = link.dataset.nav;
-      document.querySelectorAll('[data-nav]').forEach(l => l.classList.toggle('active', l === link));
+      // مزامنة الحالة النشطة بين السايدبار وتبويبات الموبايل
+      document.querySelectorAll('[data-nav]').forEach(l => l.classList.toggle('active', l.dataset.nav === target));
       document.querySelectorAll('.admin-section').forEach(s =>
         s.classList.toggle('active', s.dataset.section === target));
       toggle(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
 }

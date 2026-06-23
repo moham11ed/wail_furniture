@@ -44,8 +44,24 @@
 .admin-topbar .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
 .admin-topbar .brand .logo-mark { width: 34px; height: 34px; border-radius: 9px; font-size: 0; color: transparent; background: url('../images/logo/3e80bbc6-1ea5-44f5-87ca-8ddb889e0d2b.png') center/cover no-repeat var(--primary); }
 .admin-topbar .top-actions { display: flex; align-items: center; gap: 10px; }
-.admin-topbar .menu-btn { color: #fff; width: 40px; height: 40px; display: grid; place-items: center; }
+.admin-topbar .menu-btn { display: none; } /* استُبدل بالتبويبات على الموبايل */
 .admin-topbar .menu-btn svg { width: 24px; height: 24px; }
+
+/* تبويبات الموبايل (منتجات / طلبات) */
+.mobile-tabs { display: none; gap: 6px; margin-bottom: 18px; position: sticky; top: 60px; background: var(--bg); z-index: 30; padding-top: 4px; }
+.mobile-tabs button {
+  flex: 1;
+  padding: 12px 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  background: var(--surface);
+  border-bottom: 3px solid transparent;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  box-shadow: var(--shadow-sm);
+  transition: color var(--transition), border-color var(--transition);
+}
+.mobile-tabs button.active { color: var(--accent-dark); border-bottom-color: var(--accent); }
 
 .admin-body { flex: 1; display: flex; }
 
@@ -223,4 +239,39 @@ table.admin-table { width: 100%; border-collapse: collapse; min-width: 640px; }
 
   /* المودال يملأ الشاشة براحة */
   .modal-overlay { padding: 12px; }
+}
+
+/* =========================================================
+   تبويبات الموبايل: تظهر تحت 1024 (مكان السايدبار)
+   ========================================================= */
+@media (max-width: 1023px) {
+  .mobile-tabs { display: flex; }
+  .section-head-row h2 { display: none; }
+  .section-head-row { justify-content: flex-end; margin-bottom: 14px; }
+}
+
+/* =========================================================
+   موبايل: قائمة المنتجات = اسم + تعديل/حذف فقط + مودال ملء الشاشة
+   ========================================================= */
+@media (max-width: 767px) {
+  /* إخفاء الأعمدة غير الضرورية في قائمة المنتجات */
+  [data-section="products"] .admin-table td[data-label="الصورة"],
+  [data-section="products"] .admin-table td[data-label="الفئة"],
+  [data-section="products"] .admin-table td[data-label="النوع"],
+  [data-section="products"] .admin-table td[data-label="المخزون"],
+  [data-section="products"] .admin-table td[data-label="مميز"] { display: none; }
+
+  /* اسم المنتج بارز بدون عنوان جانبي */
+  [data-section="products"] .admin-table td[data-label="الاسم"] { font-weight: 700; font-size: 1rem; padding-bottom: 4px; }
+  [data-section="products"] .admin-table td[data-label="الاسم"]::before,
+  [data-section="products"] .admin-table td[data-label="إجراءات"]::before { display: none; }
+  [data-section="products"] .admin-table td[data-label="إجراءات"] { padding-top: 4px; }
+
+  /* المودال يملأ الشاشة بالكامل (فورم كامل الصفحة) */
+  .modal-overlay { padding: 0; align-items: stretch; }
+  .modal { max-width: 100%; min-height: 100vh; border-radius: 0; margin: 0; display: flex; flex-direction: column; }
+  .modal-head { border-radius: 0; }
+  .modal > form { display: flex; flex-direction: column; flex: 1; }
+  .modal-body { flex: 1; }
+  .modal-foot { position: sticky; bottom: 0; background: var(--surface); }
 }
