@@ -1,10 +1,10 @@
 [
-  { "id": "bedrooms", "name": "غرف نوم", "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&q=80&auto=format&fit=crop" },
-  { "id": "kids-bedrooms", "name": "غرف أطفال", "image": "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=800&q=80&auto=format&fit=crop" },
+  { "id": "bedroom", "name": "غرف نوم", "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&q=80&auto=format&fit=crop" },
+  { "id": "kids", "name": "غرف أطفال", "image": "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=800&q=80&auto=format&fit=crop" },
   { "id": "dining", "name": "سفرة", "image": "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=800&q=80&auto=format&fit=crop" },
   { "id": "sectional", "name": "ركنة", "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80&auto=format&fit=crop" },
-  { "id": "living-room-set", "name": "انتريه", "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80&auto=format&fit=crop" },
-  { "id": "niche", "name": "نيش", "image": "https://images.unsplash.com/photo-1558002038-1055907df827?w=800&q=80&auto=format&fit=crop" },
+  { "id": "living", "name": "انتريه", "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80&auto=format&fit=crop" },
+  { "id": "display", "name": "نيش", "image": "https://images.unsplash.com/photo-1558002038-1055907df827?w=800&q=80&auto=format&fit=crop" },
   { "id": "wardrobe", "name": "دولاب", "image": "https://images.unsplash.com/photo-1558997519-83ea9252edf8?w=800&q=80&auto=format&fit=crop" },
   { "id": "bed", "name": "سرير", "image": "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&q=80&auto=format&fit=crop" }
 ]

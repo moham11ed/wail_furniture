@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم | وائل شداد</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body data-admin-page="dashboard">
+
+  <div class="admin-shell">
+    <!-- شريط علوي -->
+    <header class="admin-topbar">
+      <div class="brand">
+        <span class="logo-mark">و</span>
+        <span>لوحة تحكم وائل شداد</span>
+      </div>
+      <div class="top-actions">
+        <button class="btn btn-outline" id="logout-btn" style="color:#fff;border-color:rgba(255,255,255,0.5);padding:8px 16px">خروج</button>
+        <button class="menu-btn" id="admin-menu" aria-label="القائمة">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-body">
+      <div class="sidebar-overlay" id="sidebar-overlay"></div>
+      <!-- القائمة الجانبية -->
+      <aside class="admin-sidebar" id="admin-sidebar">
+        <a class="active" data-nav="products">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          المنتجات
+        </a>
+        <a data-nav="orders">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h9"/></svg>
+          الطلبات
+        </a>
+      </aside>
+
+      <!-- المحتوى -->
+      <main class="admin-main">
+        <!-- قسم المنتجات -->
+        <section class="admin-section active" data-section="products">
+          <div class="section-head-row">
+            <h2>المنتجات</h2>
+            <button class="btn btn-primary" id="add-product-btn">+ إضافة منتج</button>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr><th>الصورة</th><th>الاسم</th><th>الفئة</th><th>النوع</th><th>المخزون</th><th>مميز</th><th>إجراءات</th></tr>
+              </thead>
+              <tbody id="products-tbody">
+                <tr><td colspan="7" class="empty-row">جارٍ التحميل...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- قسم الطلبات -->
+        <section class="admin-section" data-section="orders">
+          <div class="section-head-row"><h2>الطلبات</h2></div>
+          <div class="orders-filter">
+            <select id="orders-status-filter">
+              <option value="">كل الحالات</option>
+              <option value="pending">قيد الانتظار</option>
+              <option value="confirmed">مؤكّد</option>
+              <option value="shipped">تم الشحن</option>
+              <option value="delivered">تم التسليم</option>
+              <option value="cancelled">ملغي</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr><th>رقم الطلب</th><th>العميل</th><th>الهاتف</th><th>المحافظة</th><th>القطع</th><th>الحالة</th><th>التاريخ</th><th>تفاصيل</th></tr>
+              </thead>
+              <tbody id="orders-tbody">
+                <tr><td colspan="8" class="empty-row">جارٍ التحميل...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal منتج -->
+  <div class="modal-overlay" id="product-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modal-title">إضافة منتج</h3>
+        <button class="modal-close" data-close>×</button>
+      </div>
+      <form id="product-form">
+        <div class="modal-body">
+          <input type="hidden" id="p-id">
+          <div class="form-row">
+            <label for="p-name">اسم المنتج *</label>
+            <input type="text" id="p-name" required>
+          </div>
+          <div class="form-row">
+            <label for="p-desc">الوصف</label>
+            <textarea id="p-desc"></textarea>
+          </div>
+          <div class="form-grid cols-2">
+            <div class="form-row">
+              <label for="p-category">الفئة *</label>
+              <select id="p-category" required>
+                <option value="bedroom">غرف نوم</option>
+                <option value="kids">غرف أطفال</option>
+                <option value="dining">سفرة</option>
+                <option value="sectional">ركنة</option>
+                <option value="living">انتريه</option>
+                <option value="display">نيش</option>
+                <option value="wardrobe">دولاب</option>
+                <option value="bed">سرير</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="p-type">نوع المنتج *</label>
+              <select id="p-type" required>
+                <option value="single_item">قطعة مفردة</option>
+                <option value="room_package">باكدج غرفة</option>
+                <option value="full_package">باكدج بيت كامل</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid cols-2">
+            <div class="form-row">
+              <label for="p-price">السعر (داخلي اختياري)</label>
+              <input type="number" id="p-price" min="0" step="any" placeholder="لا يظهر للعميل">
+              <div class="field-hint">للاستخدام الداخلي فقط — لا يُعرض في الموقع.</div>
+            </div>
+            <div class="form-row">
+              <label for="p-stock">المخزون *</label>
+              <input type="number" id="p-stock" min="0" value="0" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="p-sizes">الأحجام المتاحة</label>
+            <input type="text" id="p-sizes" placeholder="160×200، 180×200">
+            <div class="field-hint">افصل بين القيم بفاصلة (،).</div>
+          </div>
+          <div class="form-row">
+            <label for="p-colors">الألوان المتاحة</label>
+            <input type="text" id="p-colors" placeholder="أبيض، بيج، رمادي">
+            <div class="field-hint">افصل بين القيم بفاصلة (،).</div>
+          </div>
+          <div class="form-row">
+            <label for="p-images">صور المنتج</label>
+            <input type="file" id="p-images" accept="image/*" multiple>
+            <div class="img-preview" id="img-preview"></div>
+          </div>
+          <div class="form-row checkbox-row">
+            <input type="checkbox" id="p-featured">
+            <label for="p-featured" style="margin:0">منتج مميز (يظهر في الرئيسية)</label>
+          </div>
+          <p id="modal-error" class="login-error" style="display:none"></p>
+        </div>
+        <div class="modal-foot">
+          <button type="submit" class="btn btn-primary" id="save-product">حفظ</button>
+          <button type="button" class="btn btn-outline" data-close>إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal تفاصيل الطلب -->
+  <div class="modal-overlay" id="order-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>تفاصيل الطلب</h3>
+        <button class="modal-close" data-close>×</button>
+      </div>
+      <div class="modal-body" id="order-details"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

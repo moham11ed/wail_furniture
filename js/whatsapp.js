@@ -30,6 +30,16 @@ function sendToWhatsapp(product) {
   openWhatsapp(message);
 }
 
+/* استفسار عن منتج (صفحة التفاصيل) — مع المقاس واللون المختارين */
+function sendProductInquiry(product, size, color) {
+  let message = `السلام عليكم، أود الاستفسار عن:
+المنتج: ${product.name}`;
+  if (size) message += `\nالمقاس: ${size}`;
+  if (color) message += `\nاللون: ${color}`;
+  message += `\nالكود: ${product.id}`;
+  openWhatsapp(message);
+}
+
 /* رسالة عامة (للزر العائم / الهيدر) */
 function sendGeneralWhatsapp(customMessage) {
   const message = customMessage || "السلام عليكم، حابب أستفسر عن منتجات معرض وائل شداد للأثاث";

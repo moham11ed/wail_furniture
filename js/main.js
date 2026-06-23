@@ -15,8 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const page = document.body.dataset.page;
   if (page === 'home') initHome();
   else if (page === 'room') initRoomPage();
+  else if (page === 'products' && typeof initProductsPage === 'function') initProductsPage();
   else if (page === 'product') initProductPage();
   else if (page === 'contact') initContactPage();
+  else if (page === 'cart' && typeof renderCartPage === 'function') renderCartPage();
+  else if (page === 'checkout' && typeof initCheckoutPage === 'function') initCheckoutPage();
+  else if (page === 'order-success' && typeof initOrderSuccess === 'function') initOrderSuccess();
 });
 
 /* ---------- مؤشّر تقدّم القراءة ---------- */
@@ -310,11 +314,13 @@ function renderProductDetail(root, product) {
         <p class="detail-desc">${escapeHtml(product.description || product.short_description || '')}</p>
         ${blockList('مكونات الباكدج', product.includes)}
         ${blockList('الخامات', product.materials)}
-        ${blockChips('الألوان المتاحة', product.colors)}
+        ${optionGroup('المقاس', product.sizes, 'size')}
+        ${optionGroup('اللون', product.colors, 'color')}
         ${product.dimensions ? `<div class="detail-block"><h4>الأبعاد</h4><p>${escapeHtml(product.dimensions)}</p></div>` : ''}
         <div class="detail-cta">
-          <p>السعر يُحدَّد حسب المواصفات والخامات المختارة. تواصل معنا للحصول على عرض سعر سريع.</p>
-          <button class="btn btn-wa" id="detail-wa">${waIcon(20)} اطلب عرض سعر عبر واتساب</button>
+          <p>أضف المنتج للسلة وأكمل بياناتك، وهنتواصل معاك لتحديد السعر والتفاصيل. (الدفع كاش عند الاستلام)</p>
+          <button class="btn btn-primary btn-block" id="detail-add">${cartIcon(20)} أضف للسلة</button>
+          <button class="btn btn-wa btn-block" id="detail-wa" style="margin-top:10px">${waIcon(20)} استفسار عبر واتساب</button>
         </div>
       </div>
     </div>
@@ -373,19 +379,46 @@ function renderProductDetail(root, product) {
     if (e.key === 'ArrowLeft') setImage(current + 1);
   });
 
-  // زر واتساب
-  root.querySelector('#detail-wa').addEventListener('click', () => sendToWhatsapp(product));
+  // اختيار المقاس واللون
+  const selected = {
+    size: (product.sizes && product.sizes[0]) || null,
+    color: (product.colors && product.colors[0]) || null
+  };
+  root.querySelectorAll('.option-group').forEach(group => {
+    const key = group.dataset.option;
+    group.querySelectorAll('.option-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        group.querySelectorAll('.option-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        selected[key] = chip.dataset.value;
+      });
+    });
+  });
+
+  // أضف للسلة
+  root.querySelector('#detail-add').addEventListener('click', () => {
+    cart.add(product, 1, selected.size, selected.color);
+    showToast('تمت إضافة "' + product.name + '" إلى السلة');
+  });
+
+  // استفسار عبر واتساب
+  root.querySelector('#detail-wa').addEventListener('click', () =>
+    sendProductInquiry(product, selected.size, selected.color));
+}
+
+/* مجموعة اختيار (مقاس/لون) — أول خيار محدد افتراضيًا */
+function optionGroup(title, items, key) {
+  if (!items || !items.length) return '';
+  const chips = items.map((v, i) =>
+    `<button type="button" class="option-chip${i === 0 ? ' active' : ''}" data-value="${escapeHtml(v)}">${escapeHtml(v)}</button>`
+  ).join('');
+  return `<div class="option-group" data-option="${key}"><h4>${title}</h4><div class="option-chips">${chips}</div></div>`;
 }
 
 function blockList(title, items) {
   if (!items || !items.length) return '';
   const lis = items.map(i => `<li>${escapeHtml(i)}</li>`).join('');
   return `<div class="detail-block"><h4>${title}</h4><ul class="detail-list">${lis}</ul></div>`;
-}
-function blockChips(title, items) {
-  if (!items || !items.length) return '';
-  const chips = items.map(i => `<span class="chip">${escapeHtml(i)}</span>`).join('');
-  return `<div class="detail-block"><h4>${title}</h4><div class="chips">${chips}</div></div>`;
 }
 
 /* =========================================================
@@ -404,6 +437,43 @@ function initContactPage() {
 الرسالة: ${msg || 'أرغب في الاستفسار عن منتجاتكم'}`;
     sendGeneralWhatsapp(text);
   });
+}
+
+/* ---------- صفحة نجاح الطلب ---------- */
+function initOrderSuccess() {
+  const num = sessionStorage.getItem('ws_last_order');
+  const numEl = document.getElementById('order-number');
+  if (numEl) numEl.textContent = num || '—';
+
+  const track = document.getElementById('track-order');
+  if (track) {
+    track.addEventListener('click', () => {
+      sendGeneralWhatsapp(`السلام عليكم، أود الاستفسار عن حالة طلبي رقم: ${num || ''}`);
+    });
+  }
+}
+
+/* ---------- Toast ---------- */
+function showToast(message, type = 'success') {
+  let wrap = document.querySelector('.toast-wrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'toast-wrap';
+    document.body.appendChild(wrap);
+  }
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  const ico = type === 'error'
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>';
+  toast.innerHTML = ico + '<span></span>';
+  toast.querySelector('span').textContent = message;
+  wrap.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2600);
 }
 
 /* ---------- أدوات ---------- */

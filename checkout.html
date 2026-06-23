@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إتمام الطلب | متجر وائل شداد للأثاث</title>
+  <meta name="description" content="أكمل بيانات طلبك من متجر وائل شداد — اسم وعنوان وتليفون. الدفع كاش عند الاستلام والتأكيد عبر واتساب.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/cart.css">
+</head>
+<body data-page="checkout">
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">و</span>
+        <span>وائل شداد<small>للأثاث الفاخر</small></span>
+      </a>
+      <nav class="nav-desktop" aria-label="القائمة الرئيسية">
+        <ul>
+          <li><a href="index.html">الرئيسية</a></li>
+          <li><a href="products.html">المنتجات</a></li>
+          <li><a href="products.html?type=room_package">الباكدجات</a></li>
+          <li><a href="products.html?type=single_item">القطع المفردة</a></li>
+          <li><a href="about.html">من نحن</a></li>
+          <li><a href="contact.html">تواصل معنا</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <button class="btn btn-wa header-wa-text" data-wa-general>تواصل واتساب</button>
+        <button class="header-wa-icon" data-wa-general aria-label="تواصل واتساب">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>
+        </button>
+        <a href="cart.html" class="cart-link" aria-label="السلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg><span class="cart-badge" data-cart-count>0</span></a>
+        <button class="hamburger" aria-label="القائمة">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="drawer-overlay"></div>
+  <aside class="drawer" aria-label="قائمة التنقل">
+    <div class="drawer-head">
+      <span class="logo"><span class="logo-mark">و</span><span>وائل شداد</span></span>
+      <button class="drawer-close" aria-label="إغلاق">×</button>
+    </div>
+    <nav>
+      <a href="index.html">الرئيسية</a>
+      <a href="products.html">المنتجات</a>
+      <a href="about.html">من نحن</a>
+      <a href="contact.html">تواصل معنا</a>
+    </nav>
+    <div class="drawer-footer">
+      <button class="btn btn-wa btn-block" data-wa-general>تواصل عبر واتساب</button>
+    </div>
+  </aside>
+
+  <section class="page-head">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">الرئيسية</a> / <a href="cart.html">السلة</a> / <span>إتمام الطلب</span></div>
+      <h1>إتمام الطلب</h1>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="cart-layout">
+        <!-- نموذج البيانات -->
+        <div class="contact-info-card">
+          <h2 style="margin-bottom:18px">بيانات التوصيل</h2>
+          <form class="contact-form" id="checkout-form" novalidate>
+            <div>
+              <label for="name">الاسم الكامل *</label>
+              <input type="text" id="name" name="name" placeholder="الاسم بالكامل" required>
+            </div>
+            <div>
+              <label for="phone">رقم الهاتف *</label>
+              <input type="tel" id="phone" name="phone" placeholder="01XXXXXXXXX" required>
+            </div>
+            <div>
+              <label for="city">المحافظة *</label>
+              <select id="city" name="city" required>
+                <option value="">اختر المحافظة</option>
+              </select>
+            </div>
+            <div>
+              <label for="address">العنوان التفصيلي *</label>
+              <textarea id="address" name="address" placeholder="المدينة، الشارع، رقم العقار، علامة مميزة..." required></textarea>
+            </div>
+            <div>
+              <label for="notes">ملاحظات (اختياري)</label>
+              <textarea id="notes" name="notes" placeholder="أي تفاصيل إضافية عن طلبك..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="submit-order">تأكيد الطلب عبر واتساب</button>
+            <p id="form-error" style="color:#b3402f;font-size:0.88rem;display:none"></p>
+          </form>
+        </div>
+
+        <!-- ملخص الطلب -->
+        <aside class="cart-summary">
+          <h3>ملخص طلبك</h3>
+          <div id="checkout-items"></div>
+          <div class="summary-line"><span>عدد القطع</span><strong id="co-count">0</strong></div>
+          <div class="summary-note">طلب عرض سعر — هنتواصل معاك على واتساب لتأكيد التفاصيل والسعر. الدفع كاش عند الاستلام.</div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;margin:0;padding-top:0">© <span id="year"></span> معرض وائل شداد للأثاث. جميع الحقوق محفوظة.</div>
+    </div>
+  </footer>
+
+  <button class="fab-wa" data-wa-general aria-label="تواصل عبر واتساب">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/whatsapp.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

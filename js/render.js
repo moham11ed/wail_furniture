@@ -53,12 +53,18 @@ function createProductCard(product) {
   detailsBtn.textContent = 'التفاصيل';
   detailsBtn.addEventListener('click', (e) => e.stopPropagation());
 
-  const waBtn = document.createElement('button');
-  waBtn.className = 'btn btn-wa';
-  waBtn.innerHTML = waIcon(16) + '<span>واتساب</span>';
-  waBtn.addEventListener('click', (e) => { e.stopPropagation(); sendToWhatsapp(product); });
+  const cartBtn = document.createElement('button');
+  cartBtn.className = 'btn btn-cart';
+  cartBtn.innerHTML = cartIcon(16) + '<span>أضف للسلة</span>';
+  cartBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const size = (product.sizes && product.sizes[0]) || null;
+    const color = (product.colors && product.colors[0]) || null;
+    cart.add(product, 1, size, color);
+    showToast('تمت إضافة "' + product.name + '" إلى السلة');
+  });
 
-  actions.append(detailsBtn, waBtn);
+  actions.append(detailsBtn, cartBtn);
   body.append(title, desc, actions);
   card.append(media, body);
 
@@ -85,7 +91,7 @@ function renderProducts(container, products) {
 function createRoomCard(cat) {
   const a = document.createElement('a');
   a.className = 'room-card reveal';
-  a.href = 'room.html?type=' + encodeURIComponent(cat.id);
+  a.href = 'products.html?category=' + encodeURIComponent(cat.id);
 
   const img = document.createElement('img');
   img.loading = 'lazy';
@@ -120,6 +126,11 @@ function renderSkeletons(container, count = 4) {
         <div class="skeleton-line short shimmer"></div>
       </div>`);
   }
+}
+
+/* أيقونة السلة SVG */
+function cartIcon(size = 22) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>`;
 }
 
 /* أيقونة واتساب SVG */
